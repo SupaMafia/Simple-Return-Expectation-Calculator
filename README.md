@@ -21,4 +21,4 @@ OBS! Computer Resgion Format Setting is preferably to be [English (United States
 
 To run the Java program through Command Prompt under windows in gernal: https://www.baeldung.com/java-lang-unsupportedclassversion. Compile code under JDK 8 to ensure compatibility
 
-An [Indices.txt] is provided for testing and debuging purpose.
+An [IndicesE.txt] is provided for testing and debuging purposes.
