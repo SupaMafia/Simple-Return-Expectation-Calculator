@@ -1,7 +1,7 @@
 /*
  * Date: 2021-8-4.
  * File Name: SimpleReturnExpectationCalculator.java
- * Version: 0.1
+ * Version: 0.2
  * Author: Weikang Ke
  */
 
@@ -104,18 +104,23 @@ public class SimpleReturnExpectationCalculator {
         double alpha = indexMean - beta * marketMean;
         System.out.println("α=" + alpha + " β=" + beta);
 
-        //r square calculation to estimate accuracy of the model, to be included in version 0.2
+        //r square calculation to estimate accuracy of the model, to be included in version 0.3
 
-        //Std.Error of Est, to be included in version 0.2
+        //Std.Error of Est, to be included in version 0.3
+
+        //check data size
+        if (dateNum < 60) {
+            System.out.println("Data samples are too small to reach a conclusive estimation");
+        }
 
         //take input of the return of three month government treasury bill as the risk free discount rate. Can improve by adding t-bill of different time length
         System.out.println("The return of a three-month government tresury bill is ___% ");
-        double riskFreeRate = 0; //Rf
+        double riskFreeRate60 = 0; //Rf60
         int count0 = 0;
         do {
             try {
                 Scanner in0 = new Scanner(System.in);
-                riskFreeRate = in0.nextDouble();
+                riskFreeRate60 = in0.nextDouble();
                 break;
             } catch (InputMismatchException e0) {
                 System.out.println("Non-numeric values are not allowed, please re enter");
@@ -123,10 +128,37 @@ public class SimpleReturnExpectationCalculator {
                 count0++;
             }
         } while (count0 < 10);
-
-        //check data size
-        if (dateNum < 60) {
-            System.out.println("Data samples are too small to reach a conclusive estimation");
+        double riskFreeRate120 = 0; //Rf120
+        int count1 = 0;
+        if (dateNum > 120) {
+            System.out.println("The return of a six-month government tresury bill is ___% ");
+            do {
+                try {
+                    Scanner in0 = new Scanner(System.in);
+                    riskFreeRate120 = in0.nextDouble();
+                    break;
+                } catch (InputMismatchException e0) {
+                    System.out.println("Non-numeric values are not allowed, please re enter");
+                } finally {
+                    count1++;
+                }
+            } while (count1 < 10);
+        }
+        double riskFreeRate240 = 0; //Rf240
+        int count2 = 0;
+        if (dateNum > 120) {
+            System.out.println("The return of a one year government tresury bill is ___% ");
+            do {
+                try {
+                    Scanner in0 = new Scanner(System.in);
+                    riskFreeRate240 = in0.nextDouble();
+                    break;
+                } catch (InputMismatchException e0) {
+                    System.out.println("Non-numeric values are not allowed, please re enter");
+                } finally {
+                    count2++;
+                }
+            } while (count2 < 10);
         }
 
         //find market return for 60,120 and 240 days
@@ -136,38 +168,41 @@ public class SimpleReturnExpectationCalculator {
         marketD60 = indexMarket[1][60];
         marketD0 = indexMarket[1][0];
         returnD60 = (marketD0 - marketD60) / marketD60;
-        System.out.println("Market 3 month return =" + returnD60);
-
-        //Basic 120, half year, return expectation, E(ri) calculation, on historical data
+        System.out.println("Market 3 month return = [" + String.format("%.3f", returnD60 * 100) + "%].");
         double marketD120; //market price 120 days ago
-        double returnD120;
-        if (dateNum < 120) {
+        double returnD120 = 0;
+        if (dateNum >= 120) {
+            marketD120 = indexMarket[1][120];
+            returnD120 = (marketD0 - marketD120) / marketD120;
+            System.out.println("Market half year return = [" + String.format("%.3f", returnD120 * 100) + "%].");
+        } else if (dateNum < 120) {
             System.out.println("Data samples are too small for half a year return");
         }
-        marketD120 = indexMarket[1][120];
-        returnD120 = (marketD0 - marketD120) / marketD120;
-        System.out.println("Market half year return =" + returnD120);
-
-        //Basic 240, half year, return expectation, E(ri) calculation, on historical data
         double marketD240; //market price 240 days ago
-        double returnD240;
-        if (dateNum < 120) {
-            System.out.println("Data samples are too small for year return");
+        double returnD240 = 0;
+        if (dateNum >= 240) {
+            marketD240 = indexMarket[1][240];
+            returnD240 = (marketD0 - marketD240) / marketD240;
+            System.out.println("Market year return = [" + String.format("%.3f", returnD240 * 100) + "%].");
+        } else if (dateNum < 240) {
+            System.out.println("Data samples are too small for half a year return");
         }
-        marketD240 = indexMarket[1][240];
-        returnD240 = (marketD0 - marketD240) / marketD240;
-        System.out.println("Market year return =" + returnD240);
 
-        //return expectation, E(ri) calculation, on historical data
+        //return expectation calculation, E(ri) calculation, based on historical data
         double exp60;
         double exp120;
         double exp240;
-        exp60 = riskFreeRate + beta * (returnD60 - riskFreeRate);
-        exp120 = riskFreeRate + beta * (returnD120 - riskFreeRate);
-        exp240 = riskFreeRate + beta * (returnD240 - riskFreeRate);
-        System.out.println("In 3 month, given past market condition, the index should have a expected return of" + exp60);
-        System.out.println("In 6 month, given past market condition, the index should have a expected return of" + exp120);
-        System.out.println("In 1 year, given past market condition, the index should have a expected return of" + exp240);
-
+        exp60 = riskFreeRate60 + beta * (returnD60 - riskFreeRate60);
+        exp120 = riskFreeRate120 + beta * (returnD120 - riskFreeRate120);
+        exp240 = riskFreeRate240 + beta * (returnD240 - riskFreeRate240);
+        if (dateNum >= 60) {
+            System.out.println("In 3 month, given past market condition, the index should have a expected return = [" + String.format("%.3f", exp60 * 100) + "%].");
+        }
+        if (dateNum >= 60) {
+            System.out.println("In 6 month, given past market condition, the index should have a expected return = [" + String.format("%.3f", exp120 * 100) + "%].");
+        }
+        if (dateNum >= 60) {
+            System.out.println("In 1 year, given past market condition, the index should have a expected return = [" + String.format("%.3f", exp240 * 100) + "%].");
+        }
     }
 }
