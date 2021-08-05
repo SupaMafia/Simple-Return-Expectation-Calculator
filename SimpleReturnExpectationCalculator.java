@@ -142,10 +142,10 @@ public class SimpleReturnExpectationCalculator {
         System.out.println("Std. Err. of Est. (average expected error for each index) = [" + String.format("%.3f", stdErrEst) + "].");
 
         //t value for significance
-        double t = beta / stdErrEst;
-        System.out.println("t score = [" + t + "].");
-        System.out.println("(Higher the t score, higher the predictive power the market index have to the index.)");
-        System.out.println("(t score also allows the significance of the model to be checked using t distribution.)");
+        //double t = beta / stdErrEst;
+        //System.out.println("t score = [" + t + "].");
+        //System.out.println("(Higher the t score, higher the predictive power the market index have to the index.)");
+        //System.out.println("(t score also allows the significance of the model to be checked using t distribution.)");
 
         //check data size
         if (dateNum < 60) {
