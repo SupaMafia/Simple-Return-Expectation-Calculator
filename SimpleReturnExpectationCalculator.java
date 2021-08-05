@@ -1,7 +1,7 @@
 /*
- * Date: 2021-8-4.
+ * Date: 2021-8-5.
  * File Name: SimpleReturnExpectationCalculator.java
- * Version: 0.2
+ * Version: 0.3
  * Author: Weikang Ke
  */
 
@@ -57,7 +57,7 @@ public class SimpleReturnExpectationCalculator {
         }
         double indexMean = sumIndex / dateNum;  //index as ȳ since it is dependent on market
         double marketMean = sumMarket / dateNum; //market as x̄ since it is independent
-        System.out.println("Index Mean (ȳ) =" + indexMean + " Market Mean (x̄) =" + marketMean);
+        //System.out.println("Index Mean (ȳ) =" + indexMean + " Market Mean (x̄) =" + marketMean);
 
         //calculate covariance between index and market, assume population data
         double pod; //product of difference
@@ -69,7 +69,7 @@ public class SimpleReturnExpectationCalculator {
             sopod += pod;
         }
         double covIM = sopod / dateNum; //n, not n-1, due to population data
-        System.out.println("Covariance between Index and market =" + covIM);
+        //System.out.println("Covariance between Index and market =" + covIM);
 
         //calculate Std.Dev() and Var() of index and market
         double stdDevI;
@@ -100,13 +100,52 @@ public class SimpleReturnExpectationCalculator {
         System.out.println("Persons correlation coefficient between index and market =" + corIM);
 
         //β and α calculation, βi = cor(i,m)(σi/σm), α = ȳ-βx̄
-        double beta = corIM * (stdDevI / stdDevM);
+        //double beta = corIM * (stdDevI / stdDevM);
+        double beta = covIM / varM;
         double alpha = indexMean - beta * marketMean;
-        System.out.println("α=" + alpha + " β=" + beta);
 
-        //r square calculation to estimate accuracy of the model, to be included in version 0.3
+        //r square calculation, market explains r% of the data variation
+        double[] sodfm = new double[dateNum]; //index, Square of Difference from Mean or (y- ȳ)^2
+        for (int i = 0; i < dateNum; i++) {
+            sodfm[i] = Math.pow((indexMarket[0][i] - indexMean), 2);
+        }
+        double[] regressEst = new double[dateNum]; //y hat, estimated value of y, index, from the regression function
+        for (int i = 0; i < dateNum; i++) {
+            regressEst[i] = alpha + beta * indexMarket[1][i]; //est index value = α + β * historical market index
+        }
+        double[] soefm = new double[dateNum]; //Square of estimate from mean, (y hat - ȳ)^2
+        for (int i = 0; i < dateNum; i++) {
+            soefm[i] = Math.pow((regressEst[i] - indexMean), 2);
+        }
+        double sosodfm = 0; //sum of square of difference from mean
+        for (int i = 0; i < dateNum; i++) {
+            sosodfm += sodfm[i];
+        }
+        double sosoefm = 0; //sum of square of estimate from mean
+        for (int i = 0; i < dateNum; i++) {
+            sosoefm += soefm[i];
+        }
+        double rSquare = sosoefm / sosodfm; // sosoefm / sosodfm
+        System.out.println("α= [" + String.format("%.3f", alpha) + "], β= [" + String.format("%.3f", beta) + "], r^2 (market index explains r^2 % of the data variation) = [" + String.format("%.3f", rSquare * 100) + "]%.");
 
-        //Std.Error of Est, to be included in version 0.3
+        //Std.Error of Est
+        double[] soErr = new double[dateNum]; //square of abs.error
+        for (int i = 1; i < dateNum; i++) {
+            soErr[i] = Math.pow(Math.abs(regressEst[i] - indexMarket[0][i]), 2);
+        }
+        double sosoErr = 0; // sum of Square of error
+        for (int i = 0; i < dateNum; i++) {
+            sosoErr += soErr[i];
+        }
+        double stdErrEst = 0;
+        stdErrEst = Math.sqrt(sosoErr / (dateNum - 2));
+        System.out.println("Std. Err. of Est. (average expected error for each index) = [" + String.format("%.3f", stdErrEst) + "].");
+
+        //t value for significance
+        double t = beta / stdErrEst;
+        System.out.println("t score = [" + t + "].");
+        System.out.println("(Higher the t score, higher the predictive power the market index have to the index.)");
+        System.out.println("(t score also allows the significance of the model to be checked using t distribution.)");
 
         //check data size
         if (dateNum < 60) {
@@ -114,7 +153,7 @@ public class SimpleReturnExpectationCalculator {
         }
 
         //take input of the return of three month government treasury bill as the risk free discount rate. Can improve by adding t-bill of different time length
-        System.out.println("The return of a three-month government tresury bill is ___% ");
+        System.out.println("The return of a three-month government treasury bill is ___% ");
         double riskFreeRate60 = 0; //Rf60
         int count0 = 0;
         do {
@@ -131,7 +170,7 @@ public class SimpleReturnExpectationCalculator {
         double riskFreeRate120 = 0; //Rf120
         int count1 = 0;
         if (dateNum > 120) {
-            System.out.println("The return of a six-month government tresury bill is ___% ");
+            System.out.println("The return of a six-month government treasury bill is ___% ");
             do {
                 try {
                     Scanner in0 = new Scanner(System.in);
@@ -147,7 +186,7 @@ public class SimpleReturnExpectationCalculator {
         double riskFreeRate240 = 0; //Rf240
         int count2 = 0;
         if (dateNum > 120) {
-            System.out.println("The return of a one year government tresury bill is ___% ");
+            System.out.println("The return of a one year government treasury bill is ___% ");
             do {
                 try {
                     Scanner in0 = new Scanner(System.in);
@@ -192,9 +231,9 @@ public class SimpleReturnExpectationCalculator {
         double exp60;
         double exp120;
         double exp240;
-        exp60 = riskFreeRate60 + beta * (returnD60 - riskFreeRate60);
-        exp120 = riskFreeRate120 + beta * (returnD120 - riskFreeRate120);
-        exp240 = riskFreeRate240 + beta * (returnD240 - riskFreeRate240);
+        exp60 = riskFreeRate60 + beta * (returnD60 * 100 - riskFreeRate60);  //since rf is entered in % return should be in % as well. 
+        exp120 = riskFreeRate120 + beta * (returnD120 * 100 - riskFreeRate120);
+        exp240 = riskFreeRate240 + beta * (returnD240 * 100 - riskFreeRate240);
         if (dateNum >= 60) {
             System.out.println("In 3 month, given past market condition, the index should have a expected return = [" + String.format("%.3f", exp60 * 100) + "%].");
         }
