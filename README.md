@@ -23,4 +23,6 @@ To run the Java program through Command Prompt under windows in gernal: https://
 
 An [IndicesE.txt] is provided for testing and debuging purposes.
 
-Version with more predictors using Multi-Beta Captial Asset Pricing Model is coming... which would improve prediction.
+Version with more predictors using Multi-Beta Captial Asset Pricing Model is coming soon, which would improve prediction (Dogukanli, H. and Kandir S. Y., 2002). 
+
+Reference: https://borsaistanbul.com/datum/imkbdergi/EN/ISE_Review_23.pdf
