@@ -23,4 +23,4 @@ To run the Java program through Command Prompt under windows in gernal: https://
 
 An [IndicesE.txt] is provided for testing and debuging purposes.
 
-Version with more predictors is coming... which would drastically improve prediction.
+Version with more predictors using Multi-Beta Captial Asset Pricing Model is coming... which would improve prediction.
