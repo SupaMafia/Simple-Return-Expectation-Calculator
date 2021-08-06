@@ -1,13 +1,11 @@
 # SimpleReturnExpectationCalculator
-A program that estimates the return of a given index based on historical data of one selected market index by CAPM function.
+A program that estimates the expected return of a given index based on historical data of two selected market indices by CAPM function.
 
 The program assumes that the index follows market trend. Indices that do not follow the market data will lead to very large margin of error. Thus, it is important to carefully pre screen the input data. 
 
-Error estimation will be added in a later version. 
-
 You need an txt file as input, file name is [indicesE.txt].
 
-Format for input is [rank index market].
+Format for input is [rank index predictor1 predictor2].
 
 You need to rank the indices from the newest date to the oldest date with the newest data on the first line.
 
@@ -21,8 +19,8 @@ OBS! Computer Resgion Format Setting is preferably to be [English (United States
 
 To run the Java program through Command Prompt under windows in gernal: https://www.baeldung.com/java-lang-unsupportedclassversion. Compile code under JDK 8 to ensure compatibility
 
-An [IndicesE.txt] is provided for testing and debuging purposes.
+An [IndicesE.txt] is provided for testing purposes.
 
-Version with more predictors using Multi-Beta Captial Asset Pricing Model is coming soon, which would improve prediction (Dogukanli, H. and Kandir S. Y., 2002). 
+Progam now uses Multi-Beta Captial Asset Pricing Model which improves prediction (Dogukanli, H. and Kandir S. Y., 2002). 
 
 Reference: https://borsaistanbul.com/datum/imkbdergi/EN/ISE_Review_23.pdf
